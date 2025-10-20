@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模拟验证码</title>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFangSC-Regular", "Open Sans", Arial, "Hiragino Sans GB", "Microsoft YaHei", "STHeiti", "WenQuanYi Micro Hei", SimSun, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .captcha-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        #captcha {
+            display: inline-block;
+        }
+
+        .btn {
+            display: inline-block;
+            box-sizing: border-box;
+            border: none;
+            border-radius: 6px;
+            width: 120px;
+            height: 45px;
+            line-height: 45px;
+            font-size: 16px;
+            color: #ffffff;
+            cursor: pointer;
+            background: #3498db linear-gradient(180deg, #3498db 0%, #2980b9 100%);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:hover {
+            background: #3498db linear-gradient(0deg, #3498db 0%, #2980b9 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 3px rgba(52, 152, 219, 0.3);
+        }
+
+        .action-buttons {
+            text-align: center;
+            margin: 20px 0 30px;
+        }
+
+        .result-section {
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .result-section h3 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #content {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 15px;
+            min-height: 120px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #34495e;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid #eee;
+            height: 200px;
+            overflow: auto;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        #copyTip {
+            margin-top: 10px;
+            font-size: 13px;
+            text-align: center;
+            transition: opacity 0.3s ease;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .text-green-600 {
+            color: #27ae60;
+            background-color: rgba(39, 174, 96, 0.1);
+        }
+
+        .instructions {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            color: #1565c0;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .btn {
+                width: 100px;
+                height: 40px;
+                line-height: 40px;
+                font-size: 14px;
+            }
+
+            #content {
+                font-size: 12px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>模拟验证码</h1>
+    </div>
+
+    <div class="instructions">
+        <i class="fa fa-info-circle mr-2"></i>  操作步骤：先点击开始验证，再点击提交，最后点击复制
+    </div>
+
+    <div class="captcha-container">
+        <div id="captcha"></div>
+    </div>
+
+    <div class="action-buttons">
+        <div id="btn" class="btn">提交</div>
+    </div>
+
+    <div class="result-section">
+        <h3>验证结果</h3>
+        <div id="content"></div>
+        <button id="copyBtn" class="copy-btn">
+            <i class="fa fa-copy"></i>复制
+        </button>
+        <div id="copyTip" class="hidden"></div>
+    </div>
+</div>
+
+<script src="libs/gt4.js"></script>
+<script>
+    var btn = document.getElementById('btn');
+    initGeetest4({
+        captchaId: '8a0b7f89c7e7e8c0b2faa331e951a843',
+        product: 'float',
+        client_type: 'web',
+        lang: 'zho'
+    }, function (captcha) {
+        // captcha为验证码实例
+        captcha.appendTo("#captcha");
+        btn.addEventListener('click', function () {
+            var result = captcha.getValidate();
+            var rescaptcha = {
+                "type": 0,
+                "scene": "futures_points",
+                "version": "v4",
+                "captcha_type": 0
+            }
+            rescaptcha.captcha_id = result.captcha_id
+            rescaptcha.lot_number = result.lot_number
+            rescaptcha.pass_token = result.pass_token
+            rescaptcha.gen_time = result.gen_time
+            rescaptcha.captcha_output = result.captcha_output
+            document.getElementById("content").innerHTML = JSON.stringify(rescaptcha, null, 2);
+        })
+    });
+
+    // 获取元素
+    const contentDiv = document.getElementById('content');
+    const copyBtn = document.getElementById('copyBtn');
+    const copyTip = document.getElementById('copyTip');
+
+    copyBtn.addEventListener('click', function () {
+        const textToCopy = contentDiv.textContent;
+        const tempTextarea = document.createElement('textarea');
+        tempTextarea.value = textToCopy;
+        document.body.appendChild(tempTextarea);
+        tempTextarea.select();
+
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showCopyTip('复制成功！文本已复制到剪贴板', 'text-green-600');
+            } else {
+                showCopyTip('复制失败，请手动复制', 'text-red-600');
+            }
+        } catch (err) {
+            showCopyTip('复制失败，请手动复制', 'text-red-600');
+        }
+
+        document.body.removeChild(tempTextarea);
+
+        // 3秒后隐藏提示
+        setTimeout(() => {
+            copyTip.className = 'hidden';
+        }, 3000);
+    });
+
+    // 显示复制提示的函数
+    function showCopyTip(message, colorClass) {
+        copyTip.textContent = message;
+        copyTip.className = colorClass;
+    }
+</script>
+</body>
+</html>
